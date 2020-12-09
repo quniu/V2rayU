@@ -11,11 +11,11 @@ import SwiftyJSON
 
 // v2ray-core version check, download, unzip
 class V2rayCore {
-    static let version = "v4.21.3"
+    static let version = "v4.31.0"
     // need replace ${version}
-    var releaseUrl: String = "https://github.com/v2ray/v2ray-core/releases/download/${version}/v2ray-macos.zip"
+    var releaseUrl: String = "https://github.com/v2fly/v2ray-core/releases/download/${version}/v2ray-macos-64.zip"
     // lastet release verison info
-    let versionUrl: String = "https://api.github.com/repos/v2ray/v2ray-core/releases/latest"
+    let versionUrl: String = "https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
 
     func checkLocal(hasNewVersion: Bool) {
         // has new verion
@@ -95,7 +95,7 @@ class V2rayCore {
     }
 
     func download() {
-        let version = UserDefaults.get(forKey: .v2rayCoreVersion) ?? "v4.20.0"
+        let version = UserDefaults.get(forKey: .v2rayCoreVersion) ?? "v4.31.0"
         let url = releaseUrl.replacingOccurrences(of: "${version}", with: version)
         NSLog("start download", version)
 
@@ -106,8 +106,8 @@ class V2rayCore {
             return
         }
 
-        // download file: /Application/V2rayU.app/Contents/Resources/v2ray-macos.zip
-        let fileUrl = URL.init(fileURLWithPath: shFile.path.replacingOccurrences(of: "/unzip.sh", with: "/v2ray-macos.zip"))
+        // download file: /Application/V2rayU.app/Contents/Resources/v2ray-macos-64.zip
+        let fileUrl = URL.init(fileURLWithPath: shFile.path.replacingOccurrences(of: "/unzip.sh", with: "/v2ray-macos-64.zip"))
         let destination: DownloadRequest.DownloadFileDestination = { _, _ in
             return (fileUrl, [.removePreviousFile, .createIntermediateDirectories])
         }

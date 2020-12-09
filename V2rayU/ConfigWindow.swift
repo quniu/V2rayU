@@ -41,6 +41,7 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
 
     @IBOutlet weak var serverView: NSView!
     @IBOutlet weak var VmessView: NSView!
+    @IBOutlet weak var VlessView: NSView!
     @IBOutlet weak var ShadowsocksView: NSView!
     @IBOutlet weak var SocksView: NSView!
     @IBOutlet weak var TrojanView: NSView!
@@ -52,6 +53,12 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
     @IBOutlet weak var vmessLevel: NSTextField!
     @IBOutlet weak var vmessUserId: NSTextField!
     @IBOutlet weak var vmessSecurity: NSPopUpButton!
+
+    // vless
+    @IBOutlet weak var vlessAddr: NSTextField!
+    @IBOutlet weak var vlessPort: NSTextField!
+    @IBOutlet weak var vlessUserId: NSTextField!
+    @IBOutlet weak var vlessLevel: NSTextField!
 
     // shadowsocks
     @IBOutlet weak var shadowsockAddr: NSTextField!
@@ -264,6 +271,14 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
         }
         v2rayConfig.serverVmess.users[0] = user
 
+        // vless
+        v2rayConfig.serverVless.address = self.vlessAddr.stringValue
+        v2rayConfig.serverVmess.port = Int(self.vlessPort.intValue)
+        var vless_user = V2rayOutboundVLessUser()
+        vless_user.id = self.vlessUserId.stringValue
+        vless_user.level = Int(self.vlessLevel.intValue)
+        v2rayConfig.serverVless.users[0] = vless_user
+
         // shadowsocks
         v2rayConfig.serverShadowsocks.address = self.shadowsockAddr.stringValue
         v2rayConfig.serverShadowsocks.port = Int(self.shadowsockPort.intValue)
@@ -271,6 +286,11 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
         if self.vmessSecurity.indexOfSelectedItem >= 0 {
             v2rayConfig.serverShadowsocks.method = self.shadowsockMethod.titleOfSelectedItem ?? "aes-256-cfb"
         }
+
+        // trojan
+        v2rayConfig.serverTrojan.address = self.trojanAddr.stringValue
+        v2rayConfig.serverTrojan.port = Int(self.trojanPort.intValue)
+        v2rayConfig.serverTrojan.password = self.trojanPass.stringValue
 
         // socks5
         v2rayConfig.serverSocks5.servers[0].address = self.socks5Addr.stringValue
@@ -361,6 +381,15 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
             self.vmessSecurity.selectItem(withTitle: user.security)
         }
 
+        // vless
+        self.vlessAddr.stringValue = v2rayConfig.serverVless.address
+        self.vmessPort.intValue = Int32(v2rayConfig.serverVless.port)
+        if v2rayConfig.serverVless.users.count > 0 {
+            let user = v2rayConfig.serverVless.users[0]
+            self.vlessLevel.intValue = Int32(user.level)
+            self.vlessUserId.stringValue = user.id
+        }
+
         // shadowsocks
         self.shadowsockAddr.stringValue = v2rayConfig.serverShadowsocks.address
         if v2rayConfig.serverShadowsocks.port > 0 {
@@ -376,6 +405,15 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
             self.socks5User.stringValue = users[0].user
             self.socks5Pass.stringValue = users[0].pass
         }
+
+        // trojan
+        self.trojanAddr.stringValue = v2rayConfig.serverTrojan.address
+        self.trojanPass.stringValue = v2rayConfig.serverTrojan.password
+        if v2rayConfig.serverTrojan.port > 0 {
+            self.trojanPort.stringValue = String(v2rayConfig.serverTrojan.port)
+        }
+
+
         // ========================== server end =======================
 
         // ========================== stream start =======================
@@ -621,16 +659,19 @@ class ConfigWindowController: NSWindowController, NSWindowDelegate, NSTabViewDel
         switch protocolTitle {
         case "vmess":
             self.VmessView.isHidden = false
-            break;
+            break
+        case "vless":
+            self.VlessView.isHidden = false
+            break
         case "shadowsocks":
             self.ShadowsocksView.isHidden = false
-            break;
+            break
         case "socks":
             self.SocksView.isHidden = false
-            break;
+            break
         case "trojan":
             self.TrojanView.isHidden = false
-            break;
+            break
         default: // vmess
             self.VmessView.isHidden = true
             break
